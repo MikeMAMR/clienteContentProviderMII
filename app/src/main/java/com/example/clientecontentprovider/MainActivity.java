@@ -9,10 +9,12 @@ import android.os.Bundle;
 import android.provider.UserDictionary;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     EditText txtNombre, txtApellido, txtid;
+    TextView lista;
     private void imprimir(){
         Cursor cursor = getContentResolver().query(UserDictionary.Words.CONTENT_URI,
                 new String[]{UserDictionary.Words.WORD, UserDictionary.Words.LOCALE},
@@ -28,9 +30,13 @@ public class MainActivity extends AppCompatActivity {
                 UsuarioContrato.COLUMNS_NAME,
                 null, null, null);
         if(cursorUsuario!=null) {
+            lista.setText("");
+            String tmp = "";
             while (cursorUsuario.moveToNext()) {
                 Log.d("USUARIO", cursorUsuario.getString(0) + " - " + cursorUsuario.getString(1));
+                tmp += cursorUsuario.getString(0) + " - " + cursorUsuario.getString(1) + "\n";
             }
+            lista.setText(tmp);
         }
     }
     @Override
@@ -41,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         txtApellido = findViewById(R.id.txtApellido);
         txtNombre = findViewById(R.id.txtNombre);
         txtid = findViewById(R.id.txtID);
+        lista = findViewById(R.id.txtlista);
 
         findViewById(R.id.btnInsert).setOnClickListener(
                 view -> {
@@ -62,9 +69,12 @@ public class MainActivity extends AppCompatActivity {
         );
         findViewById(R.id.btnUpdate).setOnClickListener(
                 view -> {
+
                     ContentValues cv = new ContentValues();
                     cv.put(UsuarioContrato.COLUMN_FIRSTNAME, txtNombre.getText().toString());
                     cv.put(UsuarioContrato.COLUMN_LASTNAME, txtApellido.getText().toString());
+
+
 
                     int elementAfectados = getContentResolver().update (
                             Uri.withAppendedPath(UsuarioContrato.CONTENT_URI, txtid.getText().toString()) ,
@@ -87,15 +97,38 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.btnEliminar).setOnClickListener(
                 view -> {
-                    ContentValues cv = new ContentValues();
-                    int elemEliminados = getContentResolver().delete(
-                            Uri.withAppendedPath(UsuarioContrato.CONTENT_URI, txtid.getText().toString()) ,
-                           null, null
-                    );
-                    Log.d("CPCliente", "Elemento eliminaos" + elemEliminados);
-                    Toast.makeText(this, "Usuario eliminado: \n"+
-                            elemEliminados, Toast.LENGTH_LONG).show();
+                    //ContentValues cv = new ContentValues();
+                    if(!txtid.getText().toString().isEmpty()) {
+                        int elemEliminados = getContentResolver().delete(
+                                Uri.withAppendedPath(UsuarioContrato.CONTENT_URI, txtid.getText().toString()),
+                                null, null
+                        );
+                        Log.d("CPCliente", "Elemento eliminados: " + elemEliminados);
+                        Toast.makeText(this, "Usuario eliminado: \n" +
+                                elemEliminados, Toast.LENGTH_LONG).show();
+                    }else{
+                        Toast.makeText(this, "Usuario no encontrado", Toast.LENGTH_LONG).show();
+                    }
+                }
+        );
+        findViewById(R.id.btnVerUsuario).setOnClickListener(
+                view -> {
+                    Cursor cursorUsuario = getContentResolver().query(
+                            Uri.withAppendedPath(UsuarioContrato.CONTENT_URI,txtid.getText().toString()) ,
+                            UsuarioContrato.COLUMNS_NAME,
+                            txtid.getText().toString(), null, null);
+                    if(cursorUsuario!=null) {
 
+                        lista.setText("");
+                        String tmp = "";
+                        while (cursorUsuario.moveToNext()) {
+                            Log.d("USUARIO", cursorUsuario.getString(0) + " - " + cursorUsuario.getString(1)+ " - " + cursorUsuario.getString(2));
+                            tmp += cursorUsuario.getString(0) + "\nNombre: " + cursorUsuario.getString(1) + "\nApellido:"+cursorUsuario.getString(2) +"\n";
+                        }
+                        lista.setText(tmp);
+                    }else{
+                        lista.setText("Usuario no existe");
+                    }
                 }
         );
 
