@@ -21,7 +21,9 @@ public class MainActivity extends AppCompatActivity {
                 null, null, null);
         if(cursor!=null) {
             while (cursor.moveToNext()) {
-                Log.d("DICCIONARIOUSUARIO", cursor.getString(0) + " - " + cursor.getString(1));
+                Log.d("DICCIONARIOUSUARIO",
+                        cursor.getString(0)
+                                + " - " + cursor.getString(1));
             }
         }
 
@@ -33,8 +35,10 @@ public class MainActivity extends AppCompatActivity {
             lista.setText("");
             String tmp = "";
             while (cursorUsuario.moveToNext()) {
-                Log.d("USUARIO", cursorUsuario.getString(0) + " - " + cursorUsuario.getString(1));
-                tmp += cursorUsuario.getString(0) + " - " + cursorUsuario.getString(1) + "\n";
+                Log.d("USUARIO", cursorUsuario.getString(0) + " - "
+                        + cursorUsuario.getString(1));
+                tmp += cursorUsuario.getString(0)
+                        + " - " + cursorUsuario.getString(1) + "\n";
             }
             lista.setText(tmp);
         }
@@ -92,12 +96,10 @@ public class MainActivity extends AppCompatActivity {
                 view -> {
                     imprimir();
                 }
-
         );
 
         findViewById(R.id.btnEliminar).setOnClickListener(
                 view -> {
-                    //ContentValues cv = new ContentValues();
                     if(!txtid.getText().toString().isEmpty()) {
                         int elemEliminados = getContentResolver().delete(
                                 Uri.withAppendedPath(UsuarioContrato.CONTENT_URI, txtid.getText().toString()),
@@ -116,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                     Cursor cursorUsuario = getContentResolver().query(
                             Uri.withAppendedPath(UsuarioContrato.CONTENT_URI,txtid.getText().toString()) ,
                             UsuarioContrato.COLUMNS_NAME,
-                            txtid.getText().toString(), null, null);
+                            null, null, null);
                     if(cursorUsuario!=null) {
 
                         lista.setText("");
