@@ -132,7 +132,25 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        
+        findViewById(R.id.btnBuscarNombre).setOnClickListener(
+                view -> {
+                    Cursor cursorUsuario = getContentResolver().query(
+                            Uri.withAppendedPath(UsuarioContrato.CONTENT_URI, txtNombre.getText().toString()) ,
+                            UsuarioContrato.COLUMNS_NAME,
+                            null, null, null);
+                    if(cursorUsuario!=null) {
+                        lista.setText("");
+                        String tmp = "";
+                        while (cursorUsuario.moveToNext()) {
+                            Log.d("USUARIO", cursorUsuario.getString(0) + " - " + cursorUsuario.getString(1)+ " - " + cursorUsuario.getString(2));
+                            tmp += cursorUsuario.getString(0) + " - " + cursorUsuario.getString(1) + " - " +cursorUsuario.getString(2) +"\n";
+                        }
+                        lista.setText(tmp);
+                    }else{
+                        lista.setText("Usuario no existe");
+                    }
+                }
+        );
 
     }
 }
